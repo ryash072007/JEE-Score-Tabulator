@@ -11,22 +11,22 @@ class GetQAns:
                     greaterThanPos = line.find('>')
                     lessThanPos = line.find('</')
                     Q = line[greaterThanPos+1:lessThanPos]
-                    data.append([Q.strip()[-3:]])
+                    data.append([Q.strip()])#[-3:]])
                 if "lbl_RAnswer" in line:
                     greaterThanPos = line.find('>')
                     lessThanPos = line.find('</')
                     A = line[greaterThanPos+1:lessThanPos]
-                    data[-1].append(A.strip()[-3:])
+                    data[-1].append(A.strip())#[-3:])
         return data
     
     def ApplyPattern(self, datas):
         for i in range(len(datas)):
             if i in range(20, 25) or i in range(45, 50) or i in range(70, 75):
-                datas[i][0] = str(abs(self.QPat + int(datas[i][0])))[-3:]
+                datas[i][0] = str(abs(self.QPat + int(datas[i][0])))#[-3:]
                 datas[i][1] = datas[i][1]
             else:
-                datas[i][0] = str(abs(self.QPat + int(datas[i][0])))[-3:]
-                datas[i][1] = str(abs(self.APat + int(datas[i][1])))[-3:]
+                datas[i][0] = str(abs(self.QPat + int(datas[i][0])))#[-3:]
+                datas[i][1] = str(abs(self.APat + int(datas[i][1])))#[-3:]
 
     def GetYourQA(self, path = 'data/ZZ13100308_2083O24372S14D756E1.html'):
         data = []
@@ -47,11 +47,11 @@ class GetQAns:
                     if nonmcqQNext:
                         nonmcqQNext = False
                         A = line[greaterThanPos+1:lessThanPos]
-                        data[-1].insert(0, A.strip()[-3:])
+                        data[-1].insert(0, A.strip())#[-3:])
                         continue
                     else:
                         A = line[greaterThanPos+1:lessThanPos]
-                        data.append([A.strip()[-3:]])
+                        data.append([A.strip()])#[-3:]])
                 if "Chosen Option :" in line:
                     ANext = True
                     continue
@@ -63,7 +63,7 @@ class GetQAns:
                     greaterThanPos = line.find('>')
                     lessThanPos = line.find('</')
                     A = line[greaterThanPos+1:lessThanPos]
-                    data.append([A.strip()[-3:]])
+                    data.append([A.strip()])#[-3:]])
                     continue
                 if '<td class="bold">SA</td>' in line:
                     nonmcqQNext = True
@@ -73,7 +73,7 @@ class GetQAns:
                     greaterThanPos = line.find('>')
                     lessThanPos = line.find('</')
                     A = line[greaterThanPos+1:lessThanPos]
-                    data[-1].append(A.strip()[-3:])
+                    data[-1].append(A.strip())#[-3:])
                 if "Option 1 ID :" in line:
                     IDNext = True
                     data[-1].append([])
@@ -86,7 +86,7 @@ class GetQAns:
                     greaterThanPos = line.find('>')
                     lessThanPos = line.find('</')
                     A = line[greaterThanPos+1:lessThanPos]
-                    data[-1][-1].append(A.strip()[-3:])
+                    data[-1][-1].append(A.strip())#[-3:])
 
         return data
 
@@ -137,8 +137,38 @@ class GetQAns:
         print(f"Correct: {correct}, Incorrect: {incorrect}, Skipped: {skipped}")
         print(f"Score: {correct * 4 - incorrect}")
         return outputs
+    
+    def subjectWise(self, output):
+        mathC = 0
+        mathI = 0
+        phyC = 0
+        phyI = 0
+        chemC = 0
+        chemI = 0
+        for i in range(25):
+            if "Correct" in output[i]:
+                mathC += 1
+            if "Incorrect" in output[i]:
+                mathI += 1
+        
+        for i in range(25, 50):
+            if "Correct" in output[i]:
+                phyC += 1
+            if "Incorrect" in output[i]:
+                phyI += 1
+        
+        for i in range(50, 75):
+            if "Correct" in output[i]:
+                chemC += 1
+            if "Incorrect" in output[i]:
+                chemI += 1
+        
+        print(f"Maths: Correct: {mathC}, Incorrect: {mathI}")
+        print(f"Physics: Correct: {phyC}, Incorrect: {phyI}")
+        print(f"Chemistry: Correct: {chemC}, Incorrect: {chemI}")
 
-ans = GetQAns(56, -265) #Yash 28s2
+# ans = GetQAns(56, -265) #Yash 28s2
+ans = GetQAns(0, 0) #Yash 28s2
 # ans = GetQAns(225, -235) #Parth 23s1
 # ans = GetQAns(-250, -450) #24s2
 # ans = GetQAns(-250, -450)
@@ -147,10 +177,12 @@ QA = ans.GetQA()
 # print(QA)
 print("____")
 ans.ApplyPattern(QA)
-yourqa = ans.GetYourQA("data/ZZ13100308_2083O24372S14D756E1.html")
+yourqa = ans.GetYourQA("data/ZZ13100123_2083O24372S4D584E2.html")
 print(yourqa)
 
-
-for i in ans.CheckAns(QA, yourqa):
+data = ans.CheckAns(QA, yourqa)
+for i in data:
     print(i)
+
+ans.subjectWise(data)
 
