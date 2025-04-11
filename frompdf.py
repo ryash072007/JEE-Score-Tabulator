@@ -1,3 +1,5 @@
+import PyPDF2
+
 class GetQAns:
     def __init__(self, QPat, APat):
         self.QPat = QPat
@@ -26,67 +28,60 @@ class GetQAns:
                 datas[i][1] = datas[i][1]
             else:
                 datas[i][0] = str(abs(self.QPat + int(datas[i][0])))[-3:]
-                datas[i][1] = str(abs(self.APat + int(datas[i][1])))[-3:]
+                if "," in datas[i][1]:
+                    datas[i][1] = datas[i][1].split(",")
+                    datas[i][1][0] = str(abs(self.APat + int(datas[i][1][0])))[-3:]
+                    datas[i][1][1] = str(abs(self.APat + int(datas[i][1][1])))[-3:]
+                else:
+                    datas[i][1] = [str(abs(self.APat + int(datas[i][1])))[-3:]]
 
-    def GetYourQA(self, path = 'data/ZZ13100308_2083O24372S14D756E1.html'):
+    def GetYourQA(self, path='data/ZZ13100308_2083O24372S14D756E1.pdf'):
         data = []
-        with open(path) as AnsKey:
-            QNext = False
-            ANext = False
-            IDNext = False
-            NONMCQ = False
-            nonmcqQNext = False
-            for line in AnsKey.readlines():
+        with open(path, 'rb') as pdf_file:
+            reader = PyPDF2.PdfReader(pdf_file)
+            text = ""
+            for page in reader.pages:
+                _text = page.extract_text()
+                # print(_text)
+                text += _text
+
+            lines = text.split('\n')
+            typeQ = None
+            for line in lines:
+                if "Question Type :MCQ" in line:
+                    typeQ = "MCQ"
+                    continue
+                if "Question Type :SA" in line:
+                    typeQ = "SA"
+                    continue
                 if "Question ID :" in line:
-                    QNext = True
+                    qid = line[line.find(":") + 1:].strip()[-3:]
+                    data.append([qid])
                     continue
-                if QNext:
-                    QNext = False
-                    greaterThanPos = line.find('>')
-                    lessThanPos = line.find('</')
-                    if nonmcqQNext:
-                        nonmcqQNext = False
-                        A = line[greaterThanPos+1:lessThanPos]
-                        data[-1].insert(0, A.strip()[-3:])
+                if typeQ == "MCQ":
+                    if "Chosen Option :" in line:
+                        ans = line[line.find(":") + 1:].strip()
+                        if ans[:2] == "--":
+                            ans = "--"
+                        if "Q" in ans:
+                            ans = ans[:ans.find("Q")]
+                        if "S" in ans:
+                            ans = ans[:ans.find("S")]
+                        data[-1].append(ans)
                         continue
-                    else:
-                        A = line[greaterThanPos+1:lessThanPos]
-                        data.append([A.strip()[-3:]])
-                if "Chosen Option :" in line:
-                    ANext = True
-                    continue
-                if "Given Answer :" in line:
-                    NONMCQ = True
-                    continue
-                if NONMCQ:
-                    NONMCQ = False
-                    greaterThanPos = line.find('>')
-                    lessThanPos = line.find('</')
-                    A = line[greaterThanPos+1:lessThanPos]
-                    data.append([A.strip()[-3:]])
-                    continue
-                if '<td class="bold">SA</td>' in line:
-                    nonmcqQNext = True
-                    continue
-                if ANext:
-                    ANext = False
-                    greaterThanPos = line.find('>')
-                    lessThanPos = line.find('</')
-                    A = line[greaterThanPos+1:lessThanPos]
-                    data[-1].append(A.strip()[-3:])
-                if "Option 1 ID :" in line:
-                    IDNext = True
-                    data[-1].append([])
-                    continue
-                if  "Option 2 ID :" in line or "Option 3 ID :" in line or "Option 4 ID :" in line:
-                    IDNext = True
-                    continue
-                if IDNext:
-                    IDNext = False
-                    greaterThanPos = line.find('>')
-                    lessThanPos = line.find('</')
-                    A = line[greaterThanPos+1:lessThanPos]
-                    data[-1][-1].append(A.strip()[-3:])
+                    
+                    if "Option 1 ID :" in line:
+                        data[-1].append([line[line.find(":") + 1:].strip()[-3:]])
+                        continue
+                    if "Option 2 ID :" in line or "Option 3 ID :" in line or "Option 4 ID :" in line:
+                        data[-1][-1].append(line[line.find(":") + 1:].strip()[-3:])
+                        continue
+                if typeQ == "SA":
+                    if "wer :" in line:
+                        ans = line[line.find(":") + 1:].strip()
+                        data[-1].append(ans)
+                        continue
+
 
         return data
 
@@ -106,6 +101,7 @@ class GetQAns:
                     break
             else:
                 # print(f"error at Q: {yourans_i + 1}")
+                print(f"'{yourans[0]}'")
                 outputs.append(f"error at Q: {yourans_i + 1}")
                 continue
 
@@ -121,18 +117,20 @@ class GetQAns:
                     outputs.append(f"Q{yourans_i + 1} (ID: {yourans[0]}): Incorrect (Answer ID: {ans[1]}, Chosen: {yourans[1]})")
                     incorrect += 1
             elif len(yourans) == 3:
+                # print("'" + yourans[2] + "'")
                 if yourans[2] == "--":
                     skipped += 1
                     outputs.append(f"Q{yourans_i + 1} (ID: {yourans[0]}): Skipped")
                     continue
                 chosen_ans = str(int(yourans[1][int(yourans[2]) - 1]))
-                if chosen_ans == ans[1]:
+                if chosen_ans in ans[1]:
                     outputs.append(f"Q{yourans_i + 1} (ID: {yourans[0]}): Correct (Answer ID: {ans[1]}, Chosen: {chosen_ans})")
                     correct += 1
                 else:
                     outputs.append(f"Q{yourans_i + 1} (ID: {yourans[0]}): Incorrect (Answer ID: {ans[1]}, Chosen: {chosen_ans})")
                     incorrect += 1
             else:
+                print(yourans)
                 outputs.append(f"error at Q: {yourans_i + 1}")
         print(f"Correct: {correct}, Incorrect: {incorrect}, Skipped: {skipped}")
         print(f"Score: {correct * 4 - incorrect}")
@@ -167,18 +165,21 @@ class GetQAns:
         print(f"Physics: Correct: {phyC}, Incorrect: {phyI}")
         print(f"Chemistry: Correct: {chemC}, Incorrect: {chemI}")
 
-ans = GetQAns(56, -265) #Yash 28s2
-# ans = GetQAns(0, 0) #Yash 28s2
+# ans = GetQAns(56, -265) #Yash 28s2
+ans = GetQAns(0, 0) #Yash 28s2
 # ans = GetQAns(225, -235) #Parth 23s1
 # ans = GetQAns(-250, -450) #24s2
 # ans = GetQAns(-250, -450)
-# ans = GetQAns(756, 715) # 29s2
+ans = GetQAns(756, 715) # 29s2
 QA = ans.GetQA()
 # print(QA)
 print("____")
 ans.ApplyPattern(QA)
-yourqa = ans.GetYourQA("data/ZZ13100308_2083O24372S14D756E1.html")
-print(yourqa)
+yourqa = ans.GetYourQA("data/cdn3.digialm.com__per_g28_pub_2083_touchstone_AssessmentQPHTMLMode1__2083O24372_2083O24372S16D779_17382083913122535_ZZ131002.PDF")
+# print(yourqa)
+
+# for i in QA:
+#     print(i)
 
 data = ans.CheckAns(QA, yourqa)
 for i in data:
