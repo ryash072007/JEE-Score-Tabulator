@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}JEE Score Tabulator - Upload PDFs{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">JEE Score Tabulator</h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">Upload your JEE Answer Key and Response PDFs to calculate your score.</p>
+                
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                
+                <form method="post" action="{% url 'upload_and_process' %}" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.answer_key.id_for_label }}" class="form-label">{{ form.answer_key.label }}:</label>
+                        <input type="file" name="{{ form.answer_key.name }}" id="{{ form.answer_key.id_for_label }}" class="form-control" accept=".pdf,.html">
+                        <small class="text-muted">Upload the official JEE answer key (PDF or HTML)</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.student_response.id_for_label }}" class="form-label">{{ form.student_response.label }}:</label>
+                        <input type="file" name="{{ form.student_response.name }}" id="{{ form.student_response.id_for_label }}" class="form-control" accept=".pdf,.html">
+                        <small class="text-muted">Upload your JEE response sheet (PDF or HTML)</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.pattern_q.id_for_label }}" class="form-label">{{ form.pattern_q.label }}:</label>
+                                {{ form.pattern_q }}
+                                <small class="text-muted">Pattern adjustment for question IDs</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.pattern_a.id_for_label }}" class="form-label">{{ form.pattern_a.label }}:</label>
+                                {{ form.pattern_a }}
+                                <small class="text-muted">Pattern adjustment for answer IDs</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Calculate Score</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-muted">
+                <p class="mb-0">Pattern adjustment values are used to match questions and answers between different versions of the test.</p>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Instructions</h4>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>Upload the official JEE answer key (PDF or HTML format)</li>
+                    <li>Upload your JEE response sheet (PDF or HTML format)</li>
+                    <li>Set the pattern adjustment values if needed (usually between -500 to 500)</li>
+                    <li>Click "Calculate Score" to analyze your performance</li>
+                </ol>
+                <p><strong>Note:</strong> The results will be printed to console as well as displayed on the next page.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@ class GetQAns:
         self.QPat = QPat
         self.APat = APat
     
-    def GetQA(self, path = 'data/AnswerKey.aspx.html'):
+    def GetQA(self, path = 'old stuff/data/AnswerKey.aspx.html'):
         data = []
         with open(path) as AnsKey:
             for line in AnsKey.readlines():
@@ -177,7 +177,7 @@ QA = ans.GetQA()
 # print(QA)
 print("____")
 ans.ApplyPattern(QA)
-yourqa = ans.GetYourQA("data/ZZ13100308_2083O24372S14D756E1.html")
+yourqa = ans.GetYourQA("old stuff/data/ZZ13100308_2083O24372S14D756E1.html")
 print(yourqa)
 
 data = ans.CheckAns(QA, yourqa)

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}JEE Score Analysis Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h2 class="mb-0">JEE Score Analysis</h2>
+            </div>
+            <div class="card-body">
+                {% if summary %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">Overall Summary</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Total Score</h5>
+                                        <h1 class="display-4">{{ summary.score }}</h1>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-2">
+                                            <span class="badge bg-success">Correct: {{ summary.correct }}</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="badge bg-danger">Incorrect: {{ summary.incorrect }}</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="badge bg-secondary">Skipped: {{ summary.skipped }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-info">Total: {{ summary.total_questions }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h4 class="mb-0">Subject-wise Analysis</h4>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Correct</th>
+                                            <th>Incorrect</th>
+                                            <th>Skipped</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Mathematics</strong></td>
+                                            <td class="text-success">{{ subjects.math.correct }}</td>
+                                            <td class="text-danger">{{ subjects.math.incorrect }}</td>
+                                            <td class="text-muted">{{ subjects.math.skipped }}</td>
+                                            <td><strong>{{ subjects.math.score }}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Physics</strong></td>
+                                            <td class="text-success">{{ subjects.physics.correct }}</td>
+                                            <td class="text-danger">{{ subjects.physics.incorrect }}</td>
+                                            <td class="text-muted">{{ subjects.physics.skipped }}</td>
+                                            <td><strong>{{ subjects.physics.score }}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Chemistry</strong></td>
+                                            <td class="text-success">{{ subjects.chemistry.correct }}</td>
+                                            <td class="text-danger">{{ subjects.chemistry.incorrect }}</td>
+                                            <td class="text-muted">{{ subjects.chemistry.skipped }}</td>
+                                            <td><strong>{{ subjects.chemistry.score }}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="mb-0">Question-by-Question Analysis</h4>
+                    </div>
+                    <div class="card-body result-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Mathematics</h5>
+                                <ul class="list-group">
+                                    {% for result in results|slice:":25" %}
+                                    <li class="list-group-item {% if 'Correct' in result %}list-group-item-success{% elif 'Incorrect' in result %}list-group-item-danger{% else %}list-group-item-light{% endif %}">
+                                        {{ result }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <h5>Physics</h5>
+                                <ul class="list-group">
+                                    {% for result in results|slice:"25:50" %}
+                                    <li class="list-group-item {% if 'Correct' in result %}list-group-item-success{% elif 'Incorrect' in result %}list-group-item-danger{% else %}list-group-item-light{% endif %}">
+                                        {{ result }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <h5>Chemistry</h5>
+                                <ul class="list-group">
+                                    {% for result in results|slice:"50:75" %}
+                                    <li class="list-group-item {% if 'Correct' in result %}list-group-item-success{% elif 'Incorrect' in result %}list-group-item-danger{% else %}list-group-item-light{% endif %}">
+                                        {{ result }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <p>No results to display. Please <a href="{% url 'home' %}">upload your files</a> to analyze your score.</p>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'home' %}" class="btn btn-primary">Analyze Another Test</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
