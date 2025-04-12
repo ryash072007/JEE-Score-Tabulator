@@ -14,6 +14,8 @@ class JEEPdfUpload(models.Model):
 class JEEScores(models.Model):
     """Model for storing JEE calculation results"""
     name = models.CharField(max_length=100, blank=True)
+    test_date = models.CharField(max_length=100, blank=True)
+    test_time = models.CharField(max_length=100, blank=True)
     total_score = models.FloatField(default=0.0)
     correct_answers = models.IntegerField(default=0)
     incorrect_answers = models.IntegerField(default=0)

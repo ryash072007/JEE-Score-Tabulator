@@ -10,6 +10,8 @@ class JEECalculator:
         self.q_pat = q_pat  # Question pattern adjustment
         self.a_pat = a_pat  # Answer pattern adjustment
         self.name = ""
+        self.test_date = ""
+        self.test_time = ""
         print(f"DEBUG: JEECalculator initialized with q_pat={q_pat}, a_pat={a_pat}")
 
     def get_answer_key(self, file_path):
@@ -300,6 +302,10 @@ class JEECalculator:
                     for i, line in enumerate(lines):
                         if "Candidate Name" in line:
                             self.name = lines[i+1].strip().replace("<td>", "").replace("</td>", "")
+                        if "Test Date" in line:
+                            self.test_date = lines[i+1].strip().replace("<td>", "").replace("</td>", "")
+                        if "Test Time" in line:
+                            self.test_time = lines[i+1].strip().replace("<td>", "").replace("</td>", "")
                         if "Question ID :" in line:
                             q_next = True
                             continue

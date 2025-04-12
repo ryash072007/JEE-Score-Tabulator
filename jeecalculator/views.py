@@ -138,7 +138,9 @@ def upload_and_process(request):
                     unattempted_questions=summary['skipped'],
                     math_score=subjects['math']['score'],
                     physics_score=subjects['physics']['score'],
-                    chemistry_score=subjects['chemistry']['score']
+                    chemistry_score=subjects['chemistry']['score'],
+                    test_date=calculator.test_date,
+                    test_time=calculator.test_time,
                 )
 
                 print("\n--- Detailed Results ---")
