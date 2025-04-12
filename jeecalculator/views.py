@@ -131,7 +131,7 @@ def upload_and_process(request):
                 print(f"Chemistry: Correct: {subjects['chemistry']['correct']}, Incorrect: {subjects['chemistry']['incorrect']}, Score: {subjects['chemistry']['score']}")
                 
                 JEEScores.objects.create(
-                    name=JEECalculator.name,
+                    name=calculator.name,
                     total_score=summary['score'],
                     correct_answers=summary['correct'],
                     incorrect_answers=summary['incorrect'],
