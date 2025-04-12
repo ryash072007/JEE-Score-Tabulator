@@ -8,7 +8,7 @@ import time
 
 from .forms import JEEPdfUploadForm
 from .jee_utils import JEECalculator
-from .models import JEEPdfUpload
+from .models import JEEPdfUpload, JEEScores
 
 def home(request):
     """Home page with upload form"""
@@ -130,6 +130,17 @@ def upload_and_process(request):
                 print(f"Physics: Correct: {subjects['physics']['correct']}, Incorrect: {subjects['physics']['incorrect']}, Score: {subjects['physics']['score']}")
                 print(f"Chemistry: Correct: {subjects['chemistry']['correct']}, Incorrect: {subjects['chemistry']['incorrect']}, Score: {subjects['chemistry']['score']}")
                 
+                JEEScores.objects.create(
+                    name=JEECalculator.name,
+                    total_score=summary['score'],
+                    correct_answers=summary['correct'],
+                    incorrect_answers=summary['incorrect'],
+                    unattempted_questions=summary['skipped'],
+                    math_score=subjects['math']['score'],
+                    physics_score=subjects['physics']['score'],
+                    chemistry_score=subjects['chemistry']['score']
+                )
+
                 print("\n--- Detailed Results ---")
                 for result in results[:10]:  # Print only first 10 for brevity
                     print(result)

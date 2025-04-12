@@ -9,6 +9,7 @@ class JEECalculator:
     def __init__(self, q_pat, a_pat):
         self.q_pat = q_pat  # Question pattern adjustment
         self.a_pat = a_pat  # Answer pattern adjustment
+        self.name = ""
         print(f"DEBUG: JEECalculator initialized with q_pat={q_pat}, a_pat={a_pat}")
 
     def get_answer_key(self, file_path):
@@ -296,7 +297,9 @@ class JEECalculator:
                     non_mcq_q_next = False
                     
                     # Using direct parsing approach from jeeCalc.py
-                    for line in lines:
+                    for i, line in enumerate(lines):
+                        if "Candidate Name" in line:
+                            self.name = lines[i+1].strip().replace("<td>", "").replace("</td>", "")
                         if "Question ID :" in line:
                             q_next = True
                             continue

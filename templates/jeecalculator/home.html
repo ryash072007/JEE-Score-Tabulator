@@ -10,7 +10,7 @@
                 <h2 class="mb-0">JEE Score Tabulator</h2>
             </div>
             <div class="card-body">
-                <p class="lead">Upload your JEE Answer Key and Response PDFs to calculate your score.</p>
+                <p class="lead">Upload your JEE Answer Key and Response HTML pages to calculate your score.</p>
                 
                 {% if error %}
                 <div class="alert alert-danger">{{ error }}</div>
@@ -22,13 +22,13 @@
                     <div class="mb-3">
                         <label for="{{ form.answer_key.id_for_label }}" class="form-label">{{ form.answer_key.label }}:</label>
                         <input type="file" name="{{ form.answer_key.name }}" id="{{ form.answer_key.id_for_label }}" class="form-control" accept=".pdf,.html">
-                        <small class="text-muted">Upload the official JEE answer key (PDF or HTML)</small>
+                        <small class="text-muted">Upload the official JEE answer key (HTML)</small>
                     </div>
                     
                     <div class="mb-3">
                         <label for="{{ form.student_response.id_for_label }}" class="form-label">{{ form.student_response.label }}:</label>
                         <input type="file" name="{{ form.student_response.name }}" id="{{ form.student_response.id_for_label }}" class="form-control" accept=".pdf,.html">
-                        <small class="text-muted">Upload your JEE response sheet (PDF or HTML)</small>
+                        <small class="text-muted">Upload your JEE response sheet (HTML)</small>
                     </div>
                     
                     <div class="row">
@@ -36,14 +36,14 @@
                             <div class="mb-3">
                                 <label for="{{ form.pattern_q.id_for_label }}" class="form-label">{{ form.pattern_q.label }}:</label>
                                 {{ form.pattern_q }}
-                                <small class="text-muted">Pattern adjustment for question IDs</small>
+                                <small class="text-muted">Pattern adjustment for question IDs (DO NOT CHANGE)</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="{{ form.pattern_a.id_for_label }}" class="form-label">{{ form.pattern_a.label }}:</label>
                                 {{ form.pattern_a }}
-                                <small class="text-muted">Pattern adjustment for answer IDs</small>
+                                <small class="text-muted">Pattern adjustment for answer IDs (DO NOT CHANGE)</small>
                             </div>
                         </div>
                     </div>
