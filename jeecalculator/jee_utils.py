@@ -3,6 +3,7 @@ import PyPDF2
 from io import BytesIO
 import re
 import traceback
+from jeecalculator.formatter import format_html
 
 class JEECalculator:
     def __init__(self, q_pat, a_pat):
@@ -57,6 +58,7 @@ class JEECalculator:
                 print(f"DEBUG: Processing HTML answer key: {file_path}")
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as ans_key:
                     content = ans_key.read()
+                    content = format_html(content)  # Format HTML for better parsing
                     lines = content.split('\n')
                     print(f"DEBUG: HTML content has {len(lines)} lines")
                     
@@ -283,6 +285,7 @@ class JEECalculator:
                 print(f"DEBUG: Processing HTML student responses: {file_path}")
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as html_file:
                     content = html_file.read()
+                    content = format_html(content)  # Format HTML for better parsing
                     lines = content.split('\n')
                     print(f"DEBUG: HTML content has {len(lines)} lines")
                     
